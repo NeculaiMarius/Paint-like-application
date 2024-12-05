@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./1_1096_NECULAI_Marius_Adrian.css" />
+    <script src="/1_1096_NECULAI_Marius_Adrian.js"></script>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="app-wrapper">
+        <div class="shape-list" id="shape-list">
+          <p style="text-align: center; margin: 0.5rem;">Shape list</p>
+          <div class="separator-horizontally"></div>
+        </div>
+        <div class="app">
+          <div class="toolbar">
+            <div class="tools-wrapper">
+              <div class="center flex flex-col" style="height: 80px">
+                <input type="color" id="backgroundColorInput" />
+              </div>
+              <div class="tools-label">Background</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="tools-wrapper">
+              <div class="center color-picker" style="height: 80px">
+                <input type="color" id="colorInput" />
+                <div class="colors-container">
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block"></div>
+                  <div class="color-block recent-color"></div>
+                  <div class="color-block recent-color"></div>
+                  <div class="color-block recent-color"></div>
+                  <div class="color-block recent-color"></div>
+                </div>
+              </div>
+              <div class="tools-label">Brush color</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="tools-wrapper">
+              <div style="height: 80px" class="center">
+                <input
+                  type="number"
+                  id="brushSize"
+                  min="1"
+                  max="50"
+                  value="5"
+                />
+              </div>
+              <div class="tools-label">Brush size</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div>
+              <label for="">Fill shape?</label>
+              <div>
+                <label for="">Y</label>
+                <input
+                  type="radio"
+                  name="fill"
+                  value="yes"
+                  onclick="setFill(this)"
+                />
+                <label for="">N</label>
+                <input
+                  type="radio"
+                  name="fill"
+                  value="no"
+                  onclick="setFill(this)"
+                  checked
+                />
+              </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="tools-wrapper">
+              <div class="tools-container" style="height: 80px">
+                <div class="tool" id="lineTool" onclick="selectTool(this)" data-tool="brush">🖌️</div>
+                <div
+                  class="tool"
+                  id="lineTool"
+                  onclick="selectTool(this)"
+                  data-tool="line"
+                >
+                  —
+                </div>
+                <div
+                  class="tool"
+                  id="lineTool"
+                  onclick="selectTool(this)"
+                  data-tool="rectangle"
+                >
+                  ⬜
+                </div>
+                <div
+                  class="tool"
+                  id="lineTool"
+                  onclick="selectTool(this)"
+                  data-tool="elipse"
+                >
+                  ⚪
+                </div>
+                <div class="tool" id="lineTool" onclick="selectTool(this)" data-tool="selection">Sl</div>
+              </div>
+              <div class="tools-label">Tools</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <a href="" id="save"><button>Descarca</button></a>
+            <button id="testButton">buton</button>
+            <button id="test">CEva de test</button>
+          </div>
+          <canvas width="1200" height="550" id="canvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
