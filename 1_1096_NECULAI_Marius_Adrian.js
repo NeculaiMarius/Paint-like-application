@@ -7,11 +7,10 @@ var tool=getSelectedTool();
 let X=-1,Y=-1;
 let mx=0,my=0;
 let fill='no';
+let fillChange="no";
 let previousBackgroundColor='white';
 let actualBackgroundColor='white';
 let shapes=[];
-let selectedShapes=[];
-
 
 function getSelectedTool(){
   const tools= document.querySelectorAll('.tool');
@@ -47,12 +46,22 @@ function app(){
   contextBackground.fillRect(0, 0, canvas.width, canvas.height);
   context.drawImage(canvasBackground,0,0);
 
+  let selectedShape=null;
+
+
   const shapeList=document.querySelector('#shape-list');
 
   
   let brushColor= document.querySelector("#colorInput");
   let brushSize= document.querySelector("#brushSize");
   let backgroundColor=document.querySelector("#backgroundColorInput");
+
+  const changeAttributes=document.querySelector("#hide");
+  const changeThickness=document.querySelector("#thickness");
+  const channgeColor=document.querySelector("#colorChange");
+  const changeFillYes=document.querySelector("#fillYes");
+  const changeFillNo=document.querySelector("#fillNo");
+
 
   const colorblocks=document.querySelectorAll(".color-block");
   colorblocks.forEach((block,index)=>{
@@ -86,6 +95,7 @@ function app(){
         shape.selected=false;
       }
     })
+    changeAttributes.style.display="none";
     drawAllShapes(); // Pentru a deselecta toate formele selectate
 
     if(tool==='brush'){
@@ -176,7 +186,7 @@ function app(){
         strokeStyle:brushColor.value,
         fillStyle:brushColor.value,
         lineWidth:brushSize.value,
-        strokeStyle:brushColor.value,
+        // strokeStyle:brushColor.value,
       })
     }
     else if(tool==='elipse'){
@@ -219,30 +229,65 @@ function app(){
       })
     }
     else if(tool==='selection'){
-      console.log(X,Y,mx,my);
-
+      let noSelectedShapes=0;
       shapes.forEach(shape=>{
         switch (shape.type){
           case 'line':
             if(
-              shape.xStart>=X && shape.xFinish<=mx &&
-              shape.yStart>=Y && shape.yFinish<=my
+              shape.xStart>=Math.min(X,mx) && shape.xStart<=Math.max(mx,X) &&
+              shape.xFinish>Math.min(X,mx) && shape.xFinish<=Math.max(mx,X) &&
+              shape.yStart>=Math.min(Y,my) && shape.yStart<=Math.max(my,Y) &&
+              shape.yFinish>=Math.min(Y,my) && shape.yFinish<=Math.max(my,Y)
             ){
               shape.selected=true;
+              noSelectedShapes++;
               drawAllShapes();
             }
             break;
           case 'rectangle':
             if(
-              shape.x>=X && shape.x+shape.width<=mx &&
-              shape.y>=Y && shape.y+shape.height<my
+              shape.x>=Math.min(X,mx) && shape.x+shape.width <= Math.max(mx,X) &&
+              shape.y>=Math.min(Y,my) && shape.y+shape.height < Math.max(my,Y)
             ){
               shape.selected=true;
+              noSelectedShapes++
+              drawAllShapes();
+            }
+            break;
+          case 'elipse':
+            if(
+              shape.xCenter - shape.radiusX >= Math.min(X,mx) && shape.xCenter + shape.radiusX<= Math.max(mx,X) &&
+              shape.yCenter - shape.radiusY >= Math.min(Y,my) && shape.yCenter + shape.radiusY<= Math.max(my,Y)
+            ){
+              shape.selected=true;
+              noSelectedShapes++;
               drawAllShapes();
             }
             break;
         }
       })
+      if(noSelectedShapes===1){
+        selectedShape=shapes.find(shape=>shape.selected==true)
+        channgeColor.value=selectedShape.strokeStyle;
+        changeThickness.value=selectedShape.lineWidth;
+        fillChange=selectedShape.fill;
+        if (selectedShape.fill === "no") {
+          changeFillYes.checked = false; 
+          changeFillNo.checked = true; 
+        } else {
+          changeFillNo.checked = false;
+          changeFillYes.checked = true; 
+        }
+
+        if(selectedShape.fill==="yes"){
+          changeThickness.disabled=true;
+        }
+        else{
+          changeThickness.disabled=false;
+        }
+
+        changeAttributes.style.display='flex';  
+      }
     }
 
     context.drawImage(canvasBackground,0,0);
@@ -257,6 +302,7 @@ function app(){
     }
 
   })
+
 
   function draw(e){
     if(!painting) return;
@@ -351,8 +397,6 @@ function app(){
     context.strokeRect(Math.min(X,mx),Math.min(Y,my),Math.max(X,mx)-Math.min(X,mx),Math.max(Y,my)-Math.min(Y,my))
   }
 
-  const btnTest=document.querySelector("#testButton");
-  btnTest.addEventListener('click',drawAllShapes);
 
   function drawAllShapes(){
     context.clearRect(0,0,canvas.width,canvas.height);
@@ -428,8 +472,7 @@ function app(){
     context.drawImage(canvasBackground,0,0);
     context.drawImage(canvasShapes,0,0);
     context.drawImage(canvasDesen,0,0);
-    X=-1;
-    Y=-1;
+
   }
   function addShapeInList(shape){
     const container=document.createElement('div');
@@ -485,7 +528,29 @@ function app(){
       rewriteShapeList();
     }
   })
-  
+
+  channgeColor.addEventListener("input",()=>{
+    selectedShape.strokeStyle=channgeColor.value;
+    selectedShape.fillStyle=channgeColor.value;
+    drawAllShapes();
+    rewriteShapeList(); 
+  })
+
+  changeThickness.addEventListener("input",()=>{
+    selectedShape.lineWidth=changeThickness.value;
+    drawAllShapes();
+  })
+
+  changeFillNo.addEventListener("click",()=>{
+    selectedShape.fill=fillChange;
+    changeThickness.disabled=false;
+    drawAllShapes();
+  })
+  changeFillYes.addEventListener("click",()=>{
+    selectedShape.fill=fillChange;
+    changeThickness.disabled=true;
+    drawAllShapes();
+  })
 }
 
 
@@ -501,6 +566,9 @@ function selectTool(e){
 
 function setFill(e){
   fill=e.value;
+}
+function setFillChange(e){
+  fillChange=e.value;
 }
 
 
